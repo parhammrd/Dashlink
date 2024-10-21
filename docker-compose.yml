@@ -1,0 +1,58 @@
+version: '3.8'
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./Backend/app:/app/app
+    networks:
+      - app-network
+    env_file:
+      - ./Backend/.env
+    depends_on:
+      - db
+
+  dashboard:
+    build:
+      context: ./Dashboard
+      dockerfile: Dockerfile
+    volumes:
+      - ./Dashboard/app:/app/app
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    env_file:
+      - ./Dashboard/.env.local
+    depends_on:
+      - backend
+
+  telegrambot:
+    build:
+      context: ./Telegrambot
+      dockerfile: Dockerfile
+    volumes:
+      - ./Telegrambot:/app
+    env_file:
+      - ./Telegrambot/.env
+    networks:
+      - app-network
+
+  db:
+    image: postgres
+    container_name: postgres-database
+    env_file:
+      - ./Backend/.env
+    networks:
+      - app-network
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

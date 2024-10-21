@@ -103,6 +103,24 @@ async def scrape_and_create_post(url: str, url_id: int, user_id: int):
             session.add(new_post)
             session.commit()
 
+            item = session.query(models.Url).get(url_id)
+            if item:
+                item.scraped = True
+                session.commit()
+
+                logger.info(f"Successfully scraped {url_id}, and updated 'scraped' field.")
+
+@posts_router.get('/recent-url/')
+def get_urls(limit: int = 5) -> list[schemas.UrlRead]:
+    with Session(engine) as session:
+        statement = (
+            select(models.Url.url, models.Url.scraped)
+            .order_by(models.Url.id.desc())
+            .limit(limit)
+        )
+        results = session.exec(statement).all()
+    return [schemas.UrlRead(url=url, scraped=scraped) for url, scraped in results]
+
 @posts_router.post('/reload-post/')
 async def reload_post():
     # TODO: create a reload option for each url.

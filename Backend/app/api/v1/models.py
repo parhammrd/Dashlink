@@ -8,7 +8,7 @@ class User(SQLModel, table=True):
     name: str
     telegram_id: Optional[int] = Field(unique=True)
     username: Optional[str]
-    role: str = Field(nullable=False, foreign_key="role.role_names")
+    role: str = Field(nullable=False, foreign_key="roles.role")
     signup_at: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -21,6 +21,7 @@ class Url(SQLModel, table=True):
     id: int = Field(primary_key=True, index=True)
     url: str
     user_id: int = Field(foreign_key="user.id")
+    scraped: bool = Field(default=False)
 
     # Relationships
     post: Optional["Post"] = Relationship(back_populates="url")
@@ -31,13 +32,13 @@ class Post(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     url_id: int = Field(foreign_key="url.id")
     post_order: int = Field(default=1, description="Order of the post for custom sorting")
-    platform: str = Field(foreign_key="platform.platform_names")
+    platform: str = Field(foreign_key="platforms.platform")
     title: Optional[str] = None
     body: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
-    tags: List["Tag"] = Relationship(back_populates="post")
+    tags: List["Tags"] = Relationship(back_populates="post")
     url: Url = Relationship(back_populates="post")
     user: User = Relationship(back_populates="posts")
 
@@ -49,18 +50,18 @@ class Token(SQLModel, table=True):
 
     user: User = Relationship(back_populates="token")
 
-class Tag(SQLModel, table=True):
+class Tags(SQLModel, table=True):
     id: int = Field(primary_key=True, index=True)
     post_id: int = Field(foreign_key="post.id")
-    tag_name: str = Field(foreign_key="segmentation.tag_names")
+    tag: str = Field(foreign_key="segmentation.tag")
 
     post: Post = Relationship(back_populates="tags")
 
 class Segmentation(SQLModel, table=True):
-    tag_names: str = Field(primary_key=True)
+    tag: str = Field(primary_key=True)
 
-class Platform(SQLModel, table=True):
-    platform_names: str = Field(primary_key=True)
+class Platforms(SQLModel, table=True):
+    platform: str = Field(primary_key=True)
 
-class Role(SQLModel, table=True):
-    role_names: str = Field(primary_key=True)
+class Roles(SQLModel, table=True):
+    role: str = Field(primary_key=True)

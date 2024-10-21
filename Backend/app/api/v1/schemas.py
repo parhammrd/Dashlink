@@ -13,13 +13,8 @@ class UrlTelegramCreate(BaseModel):
     telegram_id: int
 
 class UrlRead(BaseModel):
-    id: int
     url: str
-    user_id: int
-    post_id: Optional[int]
-
-    class Config:
-        orm_mode = True
+    scraped: bool
 
 class PostCreate(BaseModel):
     post_order: int
@@ -59,20 +54,8 @@ class TagRead(BaseModel):
     class Config:
         orm_mode = True
 
-class SegmentationCreate(BaseModel):
-    tag_names: str
-
-class SegmentationRead(BaseModel):
-    tag_names: str
-
-    class Config:
-        orm_mode = True
+class Segmentation(BaseModel):
+    tag: str
 
 class PlatformCreate(BaseModel):
-    platform_names: str
-
-class PlatformRead(BaseModel):
-    platform_names: str
-
-    class Config:
-        orm_mode = True
+    platform: str

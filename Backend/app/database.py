@@ -6,10 +6,10 @@ from app.api.v1.models import (
     Url,
     Post,
     Token,
-    Tag,
+    Tags,
     Segmentation,
-    Platform,
-    Role
+    Platforms,
+    Roles
 )
 
 from sqlmodel import SQLModel, create_engine, Session
@@ -25,18 +25,18 @@ logger.info("Database schema created")
 
 # Create the foundation
 with Session(engine) as session:
-    existing_role = session.query(Role).first()
+    existing_role = session.query(Roles).first()
     if not existing_role:
         initial_roles = [
-                Role(role_names='Client'),
+                Roles(role='Client'),
             ]
         session.add_all(initial_roles)
         session.commit()
 
-    existing_platform = session.query(Platform).first()
+    existing_platform = session.query(Platforms).first()
     if not existing_platform:
         initial_platform = [
-                Platform(platform_names='Unknown'),
+                Platforms(platform='Unknown'),
             ]
         session.add_all(initial_platform)
         session.commit()

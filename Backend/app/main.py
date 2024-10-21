@@ -12,16 +12,15 @@ FRONT_URL = config('FRONT_URL')
 
 app = FastAPI()
 
-# TODO: Implement hte Front
-# origins = [FRONT_URL] # React frontend URL
+origins = [FRONT_URL]
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router.users_router)
 app.include_router(router.posts_router)
